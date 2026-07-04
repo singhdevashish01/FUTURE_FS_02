@@ -1,0 +1,32 @@
+export const leadsData = [
+  {
+    id: 1,
+    name: "Amit Sharma",
+    email: "amit@example.com",
+    phone: "9876543210",
+    source: "Portfolio Contact Form",
+    status: "New",
+    notes: "Interested in website development.",
+    createdAt: "2026-07-03",
+  },
+  {
+    id: 2,
+    name: "Priya Mehta",
+    email: "priya@example.com",
+    phone: "9123456780",
+    source: "LinkedIn",
+    status: "Contacted",
+    notes: "Asked for a business website quotation.",
+    createdAt: "2026-07-02",
+  },
+  {
+    id: 3,
+    name: "Rahul Verma",
+    email: "rahul@example.com",
+    phone: "9988776655",
+    source: "Referral",
+    status: "Converted",
+    notes: "Converted into a client for landing page project.",
+    createdAt: "2026-07-01",
+  },
+];
