@@ -1,3 +1,16 @@
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
+
 import Layout from "../../components/layout/Layout";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
@@ -7,6 +20,7 @@ function AnalyticsPage() {
   const { leads, loading, error } = useLeads();
 
   const totalLeads = leads.length;
+
   const convertedLeads = leads.filter(
     (lead) => lead.status === "Converted"
   ).length;
@@ -14,10 +28,22 @@ function AnalyticsPage() {
   const conversionRate =
     totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0;
 
-  const sources = leads.reduce((acc, lead) => {
+  const statusData = ["New", "Contacted", "Converted"].map((status) => ({
+    name: status,
+    value: leads.filter((lead) => lead.status === status).length,
+  }));
+
+  const sourceMap = leads.reduce((acc, lead) => {
     acc[lead.source] = (acc[lead.source] || 0) + 1;
     return acc;
   }, {});
+
+  const sourceData = Object.entries(sourceMap).map(([source, count]) => ({
+    source,
+    count,
+  }));
+
+  const chartColors = ["#2563eb", "#eab308", "#16a34a"];
 
   return (
     <Layout title="Analytics">
@@ -51,19 +77,49 @@ function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold mb-4">Lead Sources</h3>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Lead Status Distribution
+              </h3>
 
-            <div className="space-y-3">
-              {Object.entries(sources).map(([source, count]) => (
-                <div
-                  key={source}
-                  className="flex items-center justify-between border-b last:border-b-0 pb-3"
-                >
-                  <span className="text-gray-700">{source}</span>
-                  <span className="font-semibold">{count}</span>
-                </div>
-              ))}
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={110}
+                      label
+                    >
+                      {statusData.map((entry, index) => (
+                        <Cell
+                          key={entry.name}
+                          fill={chartColors[index % chartColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold mb-4">Lead Sources</h3>
+
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={sourceData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="source" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#2563eb" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         </>
