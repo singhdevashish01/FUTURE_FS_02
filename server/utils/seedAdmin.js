@@ -20,7 +20,7 @@ const seedAdmin = async () => {
     await User.create({
       name: "Admin User",
       email: "admin@leadflowcrm.com",
-      password: "admin123",
+      password: "LeadFlowAdmin2026Secure",
       role: "admin",
     });
 

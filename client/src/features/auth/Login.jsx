@@ -3,7 +3,7 @@ import { loginUser } from "../../services/authApi";
 
 function Login() {
   const [email, setEmail] = useState("admin@leadflowcrm.com");
-  const [password, setPassword] = useState("admin123");
+  const [password, setPassword] = useState("LeadFlowAdmin2026Secure");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -19,22 +19,7 @@ function Login() {
 
       window.location.href = "/";
     } catch (error) {
-      if (email === "admin@leadflowcrm.com" && password === "admin123") {
-        localStorage.setItem("leadflowAuth", "true");
-        localStorage.setItem("leadflowToken", "demo-token");
-        localStorage.setItem(
-          "leadflowUser",
-          JSON.stringify({
-            name: "Admin User",
-            email: "admin@leadflowcrm.com",
-            role: "admin",
-          })
-        );
-
-        window.location.href = "/";
-      } else {
-        setError("Invalid login credentials or server unavailable.");
-      }
+      setError("Invalid login credentials or server unavailable.");
     }
   };
 
@@ -87,7 +72,7 @@ function Login() {
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          Demo Credentials
+          Admin Credentials
         </p>
 
         <div className="mt-2 text-center text-sm">
@@ -95,7 +80,7 @@ function Login() {
             <strong>Email:</strong> admin@leadflowcrm.com
           </p>
           <p>
-            <strong>Password:</strong> admin123
+            <strong>Password:</strong> LeadFlowAdmin2026Secure
           </p>
         </div>
       </div>

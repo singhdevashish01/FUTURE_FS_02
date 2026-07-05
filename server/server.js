@@ -3,8 +3,8 @@ const cors = require("cors");
 require("dotenv").config();
 
 // MongoDB Connection
-// const connectDB = require("./config/db");
-// connectDB();
+const connectDB = require("./config/db");
+connectDB();
 
 // Routes
 const leadRoutes = require("./routes/leadRoutes");

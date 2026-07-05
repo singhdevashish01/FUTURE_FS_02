@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar";
 import LeadTable from "./LeadTable";
 import LeadForm from "./LeadForm";
 import LeadDetails from "./LeadDetails";
+import { toast } from "react-toastify";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
@@ -75,8 +76,10 @@ function LeadsPage() {
     try {
       if (editingLead) {
         await updateLead(editingLead._id || editingLead.id, formData);
+        toast.success("Lead updated successfully.");
       } else {
         await createLead(formData);
+        toast.success("Lead created successfully.");
       }
 
       await loadLeads();
@@ -85,7 +88,7 @@ function LeadsPage() {
       setShowForm(false);
     } catch (err) {
       console.error(err);
-      alert("Failed to save lead.");
+      toast.error("Failed to save lead.");
     }
   };
 
@@ -114,9 +117,10 @@ function LeadsPage() {
     try {
       await deleteLead(id);
       await loadLeads();
+      toast.success("Lead deleted successfully.");
     } catch (err) {
       console.error(err);
-      alert("Failed to delete lead.");
+      toast.error("Failed to delete lead.");
     }
   };
 
