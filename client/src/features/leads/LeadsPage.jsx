@@ -1,15 +1,17 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+
 import Layout from "../../components/layout/Layout";
 import SearchBar from "./SearchBar";
 import LeadTable from "./LeadTable";
-import LeadForm from "./LeadForm";
+import LeadForm from "./LeadForm/LeadForm";
 import LeadDetails from "./LeadDetails";
-import { toast } from "react-toastify";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
 
 import useLeads from "../../hooks/useLeads";
+import { defaultLeadValues } from "./LeadForm/defaultLeadValues";
 
 function LeadsPage() {
   const {
@@ -29,25 +31,10 @@ function LeadsPage() {
   const [editingLead, setEditingLead] = useState(null);
   const [selectedLead, setSelectedLead] = useState(null);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    source: "",
-    status: "New",
-    notes: "",
-  });
+  const [formData, setFormData] = useState(defaultLeadValues);
 
   const resetForm = () => {
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      source: "",
-      status: "New",
-      notes: "",
-    });
-
+    setFormData(defaultLeadValues);
     setEditingLead(null);
   };
 
@@ -55,9 +42,13 @@ function LeadsPage() {
     const search = searchTerm.toLowerCase();
 
     const matchesSearch =
-      lead.name.toLowerCase().includes(search) ||
-      lead.email.toLowerCase().includes(search) ||
-      lead.source.toLowerCase().includes(search);
+      lead.name?.toLowerCase().includes(search) ||
+      lead.email?.toLowerCase().includes(search) ||
+      lead.phone?.toLowerCase().includes(search) ||
+      lead.company?.toLowerCase().includes(search) ||
+      lead.source?.toLowerCase().includes(search) ||
+      lead.status?.toLowerCase().includes(search) ||
+      lead.notes?.toLowerCase().includes(search);
 
     const matchesStatus =
       statusFilter === "All" || lead.status === statusFilter;
@@ -70,20 +61,36 @@ function LeadsPage() {
     setShowForm(true);
   };
 
+  const normalizeLeadPayload = (data) => {
+    return {
+      ...data,
+      estimatedValue: Number(data.estimatedValue || 0),
+      probability: Number(data.probability || 0),
+      tags:
+        typeof data.tags === "string"
+          ? data.tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter(Boolean)
+          : data.tags || [],
+    };
+  };
+
   const handleSaveLead = async (e) => {
     e.preventDefault();
 
     try {
+      const payload = normalizeLeadPayload(formData);
+
       if (editingLead) {
-        await updateLead(editingLead._id || editingLead.id, formData);
+        await updateLead(editingLead._id || editingLead.id, payload);
         toast.success("Lead updated successfully.");
       } else {
-        await createLead(formData);
+        await createLead(payload);
         toast.success("Lead created successfully.");
       }
 
       await loadLeads();
-
       resetForm();
       setShowForm(false);
     } catch (err) {
@@ -96,12 +103,14 @@ function LeadsPage() {
     setEditingLead(lead);
 
     setFormData({
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      source: lead.source,
-      status: lead.status,
-      notes: lead.notes,
+      ...defaultLeadValues,
+      ...lead,
+      tags: Array.isArray(lead.tags) ? lead.tags.join(", ") : lead.tags || "",
+      nextFollowUp: lead.nextFollowUp ? lead.nextFollowUp.split("T")[0] : "",
+      expectedCloseDate: lead.expectedCloseDate
+        ? lead.expectedCloseDate.split("T")[0]
+        : "",
+      lastContacted: lead.lastContacted ? lead.lastContacted.split("T")[0] : "",
     });
 
     setShowForm(true);

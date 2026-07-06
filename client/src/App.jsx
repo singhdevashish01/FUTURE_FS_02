@@ -6,6 +6,7 @@ import AnalyticsPage from "./features/analytics/AnalyticsPage";
 import Settings from "./features/settings/Settings";
 import Login from "./features/auth/Login";
 import ProtectedRoute from "./features/auth/ProtectedRoute";
+import PipelinePage from "./features/pipeline/PipelinePage";
 
 function App() {
   return (
@@ -45,6 +46,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/pipeline"
+          element={
+            <ProtectedRoute>
+              <PipelinePage />
             </ProtectedRoute>
           }
         />

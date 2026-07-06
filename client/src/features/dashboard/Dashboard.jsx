@@ -1,28 +1,50 @@
+import {
+  Users,
+  IndianRupee,
+  TrendingUp,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
+
 import Layout from "../../components/layout/Layout";
-import StatCard from "./StatCard";
 import LeadTable from "../leads/LeadTable";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
+import MetricCard from "../../components/ui/MetricCard";
 import useLeads from "../../hooks/useLeads";
 
 function Dashboard() {
   const { leads, loading, error } = useLeads();
 
-  const stats = {
-    total: leads.length,
-    newLeads: leads.filter((lead) => lead.status === "New").length,
-    contacted: leads.filter((lead) => lead.status === "Contacted").length,
-    converted: leads.filter((lead) => lead.status === "Converted").length,
-  };
+  const totalLeads = leads.length;
+  const convertedLeads = leads.filter((lead) => lead.status === "Converted").length;
 
-  const recentLeads = leads.slice(0, 3);
+  const pipelineValue = leads.reduce(
+    (total, lead) => total + Number(lead.estimatedValue || 0),
+    0
+  );
+
+  const conversionRate =
+    totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0;
+
+  const highPriorityLeads = leads.filter(
+    (lead) => lead.priority === "High"
+  ).length;
+
+  const recentLeads = leads.slice(0, 5);
+
+  const formatCurrency = (value) => {
+    return `₹${Number(value || 0).toLocaleString("en-IN")}`;
+  };
 
   return (
     <Layout title="Dashboard">
-      <p className="text-gray-600 mb-6">
-        Welcome to LeadFlow CRM. Track, manage, and convert client leads
-        efficiently.
-      </p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Good to see you, Devashish </h1>
+        <p className="text-gray-600 mt-2">
+          Here is your live sales and lead management overview.
+        </p>
+      </div>
 
       {error && (
         <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg p-3 mb-5">
@@ -35,56 +57,83 @@ function Dashboard() {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-            <StatCard title="Total Leads" value={stats.total} color="bg-blue-600" />
-            <StatCard title="New Leads" value={stats.newLeads} color="bg-indigo-600" />
-            <StatCard title="Contacted" value={stats.contacted} color="bg-yellow-500" />
-            <StatCard title="Converted" value={stats.converted} color="bg-green-600" />
+            <MetricCard
+              title="Total Leads"
+              value={totalLeads}
+              subtitle="All leads in CRM"
+              icon={<Users size={24} />}
+              accent="blue"
+            />
+
+            <MetricCard
+              title="Pipeline Value"
+              value={formatCurrency(pipelineValue)}
+              subtitle="Estimated deal value"
+              icon={<IndianRupee size={24} />}
+              accent="green"
+            />
+
+            <MetricCard
+              title="Conversion Rate"
+              value={`${conversionRate}%`}
+              subtitle={`${convertedLeads} converted leads`}
+              icon={<TrendingUp size={24} />}
+              accent="yellow"
+            />
+
+            <MetricCard
+              title="High Priority"
+              value={highPriorityLeads}
+              subtitle="Requires attention"
+              icon={<AlertCircle size={24} />}
+              accent="red"
+            />
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-            <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+            <div className="xl:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h3 className="text-xl font-semibold mb-4">Recent Leads</h3>
 
-            <div className="flex flex-wrap gap-4">
-              <a
-                href="/leads"
-                className="bg-blue-600 text-white px-5 py-3 rounded-xl hover:bg-blue-700 transition"
-              >
-                + Add Lead
-              </a>
+              {recentLeads.length === 0 ? (
+                <EmptyState message="No leads available yet." />
+              ) : (
+                <LeadTable
+                  leads={recentLeads}
+                  onView={() => {}}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                />
+              )}
+            </div>
 
-              <a
-                href="/analytics"
-                className="bg-green-600 text-white px-5 py-3 rounded-xl hover:bg-green-700 transition"
-              >
-                View Analytics
-              </a>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h3 className="text-xl font-semibold mb-4">Pipeline Summary</h3>
 
-              <a
-                href="/leads"
-                className="bg-slate-800 text-white px-5 py-3 rounded-xl hover:bg-slate-900 transition"
-              >
-                Manage Leads
-              </a>
+              <div className="space-y-4">
+                {["New", "Contacted", "Qualified", "Proposal Sent", "Negotiation", "Converted", "Lost"].map(
+                  (status) => {
+                    const count = leads.filter(
+                      (lead) => lead.status === status
+                    ).length;
+
+                    return (
+                      <div
+                        key={status}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 size={16} className="text-blue-600" />
+                          <span className="text-gray-700">{status}</span>
+                        </div>
+
+                        <span className="font-semibold">{count}</span>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
             </div>
           </div>
-
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">Recent Leads</h3>
-            <p className="text-gray-600">
-              Latest client inquiries added to the CRM.
-            </p>
-          </div>
-
-          {recentLeads.length === 0 ? (
-            <EmptyState message="No recent leads available yet." />
-          ) : (
-            <LeadTable
-              leads={recentLeads}
-              onView={() => {}}
-              onEdit={() => {}}
-              onDelete={() => {}}
-            />
-          )}
         </>
       )}
     </Layout>

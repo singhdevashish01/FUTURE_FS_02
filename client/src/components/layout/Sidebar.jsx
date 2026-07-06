@@ -4,14 +4,14 @@ import {
   Users,
   BarChart3,
   Settings,
+  Columns3
 } from "lucide-react";
 
 function Sidebar() {
   const linkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-      isActive
-        ? "bg-blue-600 text-white"
-        : "text-gray-300 hover:bg-slate-800 hover:text-white"
+    `flex items-center gap-3 px-4 py-3 rounded-lg transition ${isActive
+      ? "bg-blue-600 text-white"
+      : "text-gray-300 hover:bg-slate-800 hover:text-white"
     }`;
 
   return (
@@ -37,6 +37,11 @@ function Sidebar() {
         <NavLink to="/settings" className={linkClass}>
           <Settings size={20} />
           Settings
+        </NavLink>
+
+        <NavLink to="/pipeline" className={linkClass}>
+          <Columns3 size={20} />
+          Pipeline
         </NavLink>
       </nav>
     </aside>
