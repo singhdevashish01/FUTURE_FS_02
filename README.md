@@ -1,6 +1,6 @@
 # LeadFlow CRM
 
-A modern Full-Stack Customer Relationship Management (CRM) application built using the MERN stack. LeadFlow CRM helps businesses manage client leads, monitor lead status, and streamline follow-up activities through a clean and responsive dashboard.
+A modern Full Stack Customer Relationship Management (CRM) application built using the MERN stack. LeadFlow CRM helps businesses manage client leads, monitor lead status, and streamline follow up activities through a clean and responsive dashboard.
 
 ---
 
@@ -168,7 +168,7 @@ DELETE /api/leads/:id
 
 - Email Notifications
 - Lead Assignment
-- Role-Based Access Control
+- Role Based Access Control
 - Dashboard Charts
 - Export Leads to CSV
 - Dark Mode
@@ -186,7 +186,17 @@ GitHub:
 https://github.com/singhdevashish01
 
 LinkedIn:
-(Add your LinkedIn Profile URL)
+https://www.linkedin.com/in/devashishsingh01
+
+---
+
+## Live Demo
+
+Frontend:
+https://leadflow-crm-devashish-da1lv8pk9-devashishsingh01.vercel.app
+
+Backend:
+https://leadflow-crm-backend-l4cd.onrender.com
 
 ---
 
