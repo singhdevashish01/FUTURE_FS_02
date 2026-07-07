@@ -29,6 +29,19 @@ function Sidebar() {
           Leads
         </NavLink>
 
+        <NavLink
+          to="/pipeline"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg transition ${isActive
+              ? "bg-blue-600 text-white"
+              : "text-gray-600 hover:bg-gray-100"
+            }`
+          }
+        >
+          <Columns3 size={20} />
+          <span>Pipeline</span>
+        </NavLink>
+
         <NavLink to="/analytics" className={linkClass}>
           <BarChart3 size={20} />
           Analytics
@@ -38,11 +51,7 @@ function Sidebar() {
           <Settings size={20} />
           Settings
         </NavLink>
-
-        <NavLink to="/pipeline" className={linkClass}>
-          <Columns3 size={20} />
-          Pipeline
-        </NavLink>
+        
       </nav>
     </aside>
   );

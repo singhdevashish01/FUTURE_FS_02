@@ -12,6 +12,7 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
 import MetricCard from "../../components/ui/MetricCard";
 import useLeads from "../../hooks/useLeads";
+import QuickActions from "../../components/dashboard/QuickActions";
 
 function Dashboard() {
   const { leads, loading, error } = useLeads();
@@ -99,19 +100,31 @@ function Dashboard() {
               ) : (
                 <LeadTable
                   leads={recentLeads}
-                  onView={() => {}}
-                  onEdit={() => {}}
-                  onDelete={() => {}}
+                  onView={() => { }}
+                  onEdit={() => { }}
+                  onDelete={() => { }}
                 />
               )}
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h3 className="text-xl font-semibold mb-4">Pipeline Summary</h3>
+            <div className="space-y-6">
+              <QuickActions />
 
-              <div className="space-y-4">
-                {["New", "Contacted", "Qualified", "Proposal Sent", "Negotiation", "Converted", "Lost"].map(
-                  (status) => {
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 className="text-xl font-semibold mb-4">
+                  Pipeline Summary
+                </h3>
+
+                <div className="space-y-4">
+                  {[
+                    "New",
+                    "Contacted",
+                    "Qualified",
+                    "Proposal Sent",
+                    "Negotiation",
+                    "Won",
+                    "Lost",
+                  ].map((status) => {
                     const count = leads.filter(
                       (lead) => lead.status === status
                     ).length;
@@ -121,16 +134,17 @@ function Dashboard() {
                         key={status}
                         className="flex items-center justify-between"
                       >
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 size={16} className="text-blue-600" />
-                          <span className="text-gray-700">{status}</span>
-                        </div>
+                        <span className="text-gray-700">
+                          {status}
+                        </span>
 
-                        <span className="font-semibold">{count}</span>
+                        <span className="font-semibold">
+                          {count}
+                        </span>
                       </div>
                     );
-                  }
-                )}
+                  })}
+                </div>
               </div>
             </div>
           </div>
