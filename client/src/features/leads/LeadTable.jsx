@@ -1,46 +1,31 @@
-function LeadTable({ leads, onView, onEdit, onDelete }) {
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "New":
-        return "bg-gray-100 text-gray-700";
-      case "Contacted":
-        return "bg-blue-100 text-blue-700";
-      case "Qualified":
-        return "bg-purple-100 text-purple-700";
-      case "Proposal Sent":
-        return "bg-orange-100 text-orange-700";
-      case "Negotiation":
-        return "bg-yellow-100 text-yellow-700";
-      case "Won":
-      case "Converted":
-        return "bg-green-100 text-green-700";
-      case "Lost":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
+import { Link } from "react-router-dom";
+import Badge from "../../components/ui/Badge";
 
-  const getPriorityClass = (priority) => {
-    switch (priority) {
-      case "High":
-        return "bg-red-100 text-red-700";
-      case "Medium":
-        return "bg-yellow-100 text-yellow-700";
-      case "Low":
-        return "bg-green-100 text-green-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
-  const formatCurrency = (value) => {
-    return `₹${Number(value || 0).toLocaleString("en-IN")}`;
-  };
+function LeadTable({ leads, onEdit, onDelete }) {
+  const formatCurrency = (value) =>
+    `₹${Number(value || 0).toLocaleString("en-IN")}`;
 
   const formatDate = (date) => {
     if (!date) return "-";
     return new Date(date).toLocaleDateString("en-IN");
+  };
+
+  const getStatusVariant = (status) => {
+    if (status === "Won" || status === "Converted") return "green";
+    if (status === "New") return "gray";
+    if (status === "Contacted") return "blue";
+    if (status === "Qualified") return "purple";
+    if (status === "Proposal Sent") return "orange";
+    if (status === "Negotiation") return "yellow";
+    if (status === "Lost") return "red";
+    return "gray";
+  };
+
+  const getPriorityVariant = (priority) => {
+    if (priority === "High") return "red";
+    if (priority === "Medium") return "yellow";
+    if (priority === "Low") return "green";
+    return "gray";
   };
 
   return (
@@ -51,32 +36,21 @@ function LeadTable({ leads, onView, onEdit, onDelete }) {
             <th className="p-4 text-sm font-semibold text-gray-600">Priority</th>
             <th className="p-4 text-sm font-semibold text-gray-600">Lead</th>
             <th className="p-4 text-sm font-semibold text-gray-600">Company</th>
-            <th className="p-4 text-sm font-semibold text-gray-600">
-              Deal Value
-            </th>
+            <th className="p-4 text-sm font-semibold text-gray-600">Deal Value</th>
             <th className="p-4 text-sm font-semibold text-gray-600">Status</th>
             <th className="p-4 text-sm font-semibold text-gray-600">Source</th>
-            <th className="p-4 text-sm font-semibold text-gray-600">
-              Follow-up
-            </th>
+            <th className="p-4 text-sm font-semibold text-gray-600">Follow-up</th>
             <th className="p-4 text-sm font-semibold text-gray-600">Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {leads.map((lead) => (
-            <tr
-              key={lead._id || lead.id}
-              className="border-b last:border-b-0 hover:bg-gray-50"
-            >
+            <tr key={lead._id || lead.id} className="border-b last:border-b-0 hover:bg-gray-50">
               <td className="p-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${getPriorityClass(
-                    lead.priority
-                  )}`}
-                >
+                <Badge variant={getPriorityVariant(lead.priority)}>
                   {lead.priority || "Medium"}
-                </span>
+                </Badge>
               </td>
 
               <td className="p-4">
@@ -84,22 +58,16 @@ function LeadTable({ leads, onView, onEdit, onDelete }) {
                 <p className="text-sm text-gray-500">{lead.email}</p>
               </td>
 
-              <td className="p-4 text-gray-600">
-                {lead.company || "Not added"}
-              </td>
+              <td className="p-4 text-gray-600">{lead.company || "Not added"}</td>
 
               <td className="p-4 font-medium">
                 {formatCurrency(lead.estimatedValue)}
               </td>
 
               <td className="p-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(
-                    lead.status
-                  )}`}
-                >
+                <Badge variant={getStatusVariant(lead.status)}>
                   {lead.status}
-                </span>
+                </Badge>
               </td>
 
               <td className="p-4 text-gray-600">{lead.source || "-"}</td>
@@ -110,12 +78,12 @@ function LeadTable({ leads, onView, onEdit, onDelete }) {
 
               <td className="p-4">
                 <div className="flex gap-3">
-                  <button
-                    onClick={() => onView(lead)}
+                  <Link
+                    to={`/leads/${lead._id || lead.id}`}
                     className="text-gray-600 hover:text-black font-medium"
                   >
                     View
-                  </button>
+                  </Link>
 
                   <button
                     onClick={() => onEdit(lead)}

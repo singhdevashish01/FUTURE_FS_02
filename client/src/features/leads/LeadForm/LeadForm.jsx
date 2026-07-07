@@ -4,6 +4,10 @@ import {
   LEAD_STATUSES,
 } from "../../../constants/leadConstants";
 
+import Input from "../../../components/ui/Input";
+import Select from "../../../components/ui/Select";
+import Button from "../../../components/ui/Button";
+
 function LeadForm({
   formData,
   setFormData,
@@ -29,14 +33,14 @@ function LeadForm({
             <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input name="name" placeholder="Full Name *" value={formData.name} onChange={handleChange} required className="w-full border rounded-lg px-4 py-2" />
-              <input name="email" type="email" placeholder="Email *" value={formData.email} onChange={handleChange} required className="w-full border rounded-lg px-4 py-2" />
-              <input name="phone" placeholder="Phone *" value={formData.phone} onChange={handleChange} required className="w-full border rounded-lg px-4 py-2" />
-              <input name="company" placeholder="Company *" value={formData.company} onChange={handleChange} required className="w-full border rounded-lg px-4 py-2" />
-              <input name="jobTitle" placeholder="Job Title" value={formData.jobTitle} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="website" placeholder="Website" value={formData.website} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="industry" placeholder="Industry" value={formData.industry} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="location" placeholder="Location" value={formData.location} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
+              <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} required />
+              <Input label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+              <Input label="Phone" name="phone" value={formData.phone} onChange={handleChange} required />
+              <Input label="Company" name="company" value={formData.company} onChange={handleChange} required />
+              <Input label="Job Title" name="jobTitle" value={formData.jobTitle} onChange={handleChange} />
+              <Input label="Website" name="website" value={formData.website} onChange={handleChange} />
+              <Input label="Industry" name="industry" value={formData.industry} onChange={handleChange} />
+              <Input label="Location" name="location" value={formData.location} onChange={handleChange} />
             </div>
           </section>
 
@@ -44,27 +48,13 @@ function LeadForm({
             <h3 className="text-lg font-semibold mb-4">Sales Information</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <select name="source" value={formData.source} onChange={handleChange} className="w-full border rounded-lg px-4 py-2">
-                {LEAD_SOURCES.map((source) => (
-                  <option key={source}>{source}</option>
-                ))}
-              </select>
+              <Select label="Source" name="source" value={formData.source} onChange={handleChange} options={LEAD_SOURCES} />
+              <Select label="Status" name="status" value={formData.status} onChange={handleChange} options={LEAD_STATUSES} />
+              <Select label="Priority" name="priority" value={formData.priority} onChange={handleChange} options={LEAD_PRIORITIES} />
 
-              <select name="status" value={formData.status} onChange={handleChange} className="w-full border rounded-lg px-4 py-2">
-                {LEAD_STATUSES.map((status) => (
-                  <option key={status}>{status}</option>
-                ))}
-              </select>
-
-              <select name="priority" value={formData.priority} onChange={handleChange} className="w-full border rounded-lg px-4 py-2">
-                {LEAD_PRIORITIES.map((priority) => (
-                  <option key={priority}>{priority}</option>
-                ))}
-              </select>
-
-              <input name="estimatedValue" type="number" min="0" placeholder="Estimated Deal Value" value={formData.estimatedValue} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="probability" type="number" min="0" max="100" placeholder="Probability (%)" value={formData.probability} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="assignedTo" placeholder="Assigned To" value={formData.assignedTo} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
+              <Input label="Estimated Deal Value" name="estimatedValue" type="number" value={formData.estimatedValue} onChange={handleChange} />
+              <Input label="Probability (%)" name="probability" type="number" value={formData.probability} onChange={handleChange} />
+              <Input label="Assigned To" name="assignedTo" value={formData.assignedTo} onChange={handleChange} />
             </div>
           </section>
 
@@ -72,9 +62,9 @@ function LeadForm({
             <h3 className="text-lg font-semibold mb-4">Follow-up Information</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input name="nextFollowUp" type="date" value={formData.nextFollowUp} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="expectedCloseDate" type="date" value={formData.expectedCloseDate} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="lastContacted" type="date" value={formData.lastContacted} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
+              <Input label="Next Follow-up" name="nextFollowUp" type="date" value={formData.nextFollowUp} onChange={handleChange} />
+              <Input label="Expected Close Date" name="expectedCloseDate" type="date" value={formData.expectedCloseDate} onChange={handleChange} />
+              <Input label="Last Contacted" name="lastContacted" type="date" value={formData.lastContacted} onChange={handleChange} />
             </div>
           </section>
 
@@ -82,21 +72,21 @@ function LeadForm({
             <h3 className="text-lg font-semibold mb-4">Notes & Requirements</h3>
 
             <div className="grid grid-cols-1 gap-4">
-              <textarea name="requirements" placeholder="Requirements" value={formData.requirements} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <textarea name="painPoints" placeholder="Pain Points" value={formData.painPoints} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <textarea name="notes" placeholder="Notes / Follow-up" value={formData.notes} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
-              <input name="tags" placeholder="Tags comma separated e.g. enterprise, urgent" value={formData.tags} onChange={handleChange} className="w-full border rounded-lg px-4 py-2" />
+              <textarea name="requirements" placeholder="Requirements" value={formData.requirements} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2" />
+              <textarea name="painPoints" placeholder="Pain Points" value={formData.painPoints} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2" />
+              <textarea name="notes" placeholder="Notes" value={formData.notes} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-2" />
+              <Input label="Tags" name="tags" value={formData.tags} onChange={handleChange} placeholder="enterprise, urgent, referral" />
             </div>
           </section>
 
           <div className="flex justify-end gap-3 sticky bottom-0 bg-white pt-4">
-            <button type="button" onClick={onCancel} className="px-4 py-2 border rounded-lg">
+            <Button variant="outline" onClick={onCancel}>
               Cancel
-            </button>
+            </Button>
 
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+            <Button type="submit" variant="primary">
               {submitText}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

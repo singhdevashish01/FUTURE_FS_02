@@ -1,58 +1,90 @@
-import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
+  GitBranch,
   BarChart3,
+  CalendarClock,
   Settings,
-  Columns3
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
+
+const navigation = [
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    name: "Leads",
+    path: "/leads",
+    icon: Users,
+  },
+  {
+    name: "Pipeline",
+    path: "/pipeline",
+    icon: GitBranch,
+  },
+  {
+    name: "Analytics",
+    path: "/analytics",
+    icon: BarChart3,
+  },
+  {
+    name: "Follow-ups",
+    path: "/follow-ups",
+    icon: CalendarClock,
+  },
+  {
+    name: "Settings",
+    path: "/settings",
+    icon: Settings,
+  },
+];
 
 function Sidebar() {
-  const linkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-lg transition ${isActive
-      ? "bg-blue-600 text-white"
-      : "text-gray-300 hover:bg-slate-800 hover:text-white"
-    }`;
-
   return (
-    <aside className="w-64 bg-slate-900 text-white min-h-screen p-5">
-      <h1 className="text-3xl font-bold mb-10">LeadFlow</h1>
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <div className="px-6 py-6 border-b border-gray-200">
+        <h1 className="text-2xl font-bold text-blue-600">
+          CRM Pro
+        </h1>
 
-      <nav className="space-y-2">
-        <NavLink to="/" className={linkClass}>
-          <LayoutDashboard size={20} />
-          Dashboard
-        </NavLink>
+        <p className="text-sm text-gray-500 mt-1">
+          Sales Management
+        </p>
+      </div>
 
-        <NavLink to="/leads" className={linkClass}>
-          <Users size={20} />
-          Leads
-        </NavLink>
+      <nav className="flex-1 p-4 space-y-2">
+        {navigation.map((item) => {
+          const Icon = item.icon;
 
-        <NavLink
-          to="/pipeline"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-3 rounded-lg transition ${isActive
-              ? "bg-blue-600 text-white"
-              : "text-gray-600 hover:bg-gray-100"
-            }`
-          }
-        >
-          <Columns3 size={20} />
-          <span>Pipeline</span>
-        </NavLink>
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`
+              }
+            >
+              <Icon size={20} />
 
-        <NavLink to="/analytics" className={linkClass}>
-          <BarChart3 size={20} />
-          Analytics
-        </NavLink>
-
-        <NavLink to="/settings" className={linkClass}>
-          <Settings size={20} />
-          Settings
-        </NavLink>
-        
+              <span className="font-medium">
+                {item.name}
+              </span>
+            </NavLink>
+          );
+        })}
       </nav>
+
+      <div className="border-t border-gray-200 p-4">
+        <p className="text-xs text-gray-500 text-center">
+          CRM Dashboard v2
+        </p>
+      </div>
     </aside>
   );
 }

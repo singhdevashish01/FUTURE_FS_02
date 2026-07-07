@@ -5,7 +5,6 @@ import Layout from "../../components/layout/Layout";
 import SearchBar from "./SearchBar";
 import LeadTable from "./LeadTable";
 import LeadForm from "./LeadForm/LeadForm";
-import LeadDetails from "./LeadDetails";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
@@ -29,7 +28,6 @@ function LeadsPage() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
-  const [selectedLead, setSelectedLead] = useState(null);
 
   const [formData, setFormData] = useState(defaultLeadValues);
 
@@ -61,20 +59,18 @@ function LeadsPage() {
     setShowForm(true);
   };
 
-  const normalizeLeadPayload = (data) => {
-    return {
-      ...data,
-      estimatedValue: Number(data.estimatedValue || 0),
-      probability: Number(data.probability || 0),
-      tags:
-        typeof data.tags === "string"
-          ? data.tags
-              .split(",")
-              .map((tag) => tag.trim())
-              .filter(Boolean)
-          : data.tags || [],
-    };
-  };
+  const normalizeLeadPayload = (data) => ({
+    ...data,
+    estimatedValue: Number(data.estimatedValue || 0),
+    probability: Number(data.probability || 0),
+    tags:
+      typeof data.tags === "string"
+        ? data.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        : data.tags || [],
+  });
 
   const handleSaveLead = async (e) => {
     e.preventDefault();
@@ -91,6 +87,7 @@ function LeadsPage() {
       }
 
       await loadLeads();
+
       resetForm();
       setShowForm(false);
     } catch (err) {
@@ -106,22 +103,24 @@ function LeadsPage() {
       ...defaultLeadValues,
       ...lead,
       tags: Array.isArray(lead.tags) ? lead.tags.join(", ") : lead.tags || "",
-      nextFollowUp: lead.nextFollowUp ? lead.nextFollowUp.split("T")[0] : "",
+      nextFollowUp: lead.nextFollowUp
+        ? lead.nextFollowUp.split("T")[0]
+        : "",
       expectedCloseDate: lead.expectedCloseDate
         ? lead.expectedCloseDate.split("T")[0]
         : "",
-      lastContacted: lead.lastContacted ? lead.lastContacted.split("T")[0] : "",
+      lastContacted: lead.lastContacted
+        ? lead.lastContacted.split("T")[0]
+        : "",
     });
 
     setShowForm(true);
   };
 
   const handleDeleteLead = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this lead?"
-    );
-
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this lead?")) {
+      return;
+    }
 
     try {
       await deleteLead(id);
@@ -169,7 +168,6 @@ function LeadsPage() {
       ) : (
         <LeadTable
           leads={filteredLeads}
-          onView={setSelectedLead}
           onEdit={handleEditLead}
           onDelete={handleDeleteLead}
         />
@@ -183,13 +181,6 @@ function LeadsPage() {
           onCancel={handleCloseForm}
           title={editingLead ? "Edit Lead" : "Add New Lead"}
           submitText={editingLead ? "Update Lead" : "Save Lead"}
-        />
-      )}
-
-      {selectedLead && (
-        <LeadDetails
-          lead={selectedLead}
-          onClose={() => setSelectedLead(null)}
         />
       )}
     </Layout>
