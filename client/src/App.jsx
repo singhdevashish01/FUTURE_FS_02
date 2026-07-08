@@ -6,6 +6,9 @@ import AnalyticsPage from "./features/analytics/AnalyticsPage";
 import Settings from "./features/settings/Settings";
 import Login from "./features/auth/Login";
 import ProtectedRoute from "./features/auth/ProtectedRoute";
+import PipelinePage from "./features/pipeline/PipelinePage";
+import LeadDetailsPage from "./features/leads/LeadDetailsPage";
+import FollowUpsPage from "./features/followups/FollowUpsPage";
 
 function App() {
   return (
@@ -23,10 +26,28 @@ function App() {
         />
 
         <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/leads"
           element={
             <ProtectedRoute>
               <LeadsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/leads/:id"
+          element={
+            <ProtectedRoute>
+              <LeadDetailsPage />
             </ProtectedRoute>
           }
         />
@@ -45,6 +66,24 @@ function App() {
           element={
             <ProtectedRoute>
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/pipeline"
+          element={
+            <ProtectedRoute>
+              <PipelinePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/follow-ups"
+          element={
+            <ProtectedRoute>
+              <FollowUpsPage />
             </ProtectedRoute>
           }
         />

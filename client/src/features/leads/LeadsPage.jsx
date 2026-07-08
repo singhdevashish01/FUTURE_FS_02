@@ -1,15 +1,18 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+
 import Layout from "../../components/layout/Layout";
 import SearchBar from "./SearchBar";
 import LeadTable from "./LeadTable";
-import LeadForm from "./LeadForm";
-import LeadDetails from "./LeadDetails";
-import { toast } from "react-toastify";
+import LeadForm from "./LeadForm/LeadForm";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
 
 import useLeads from "../../hooks/useLeads";
+import { defaultLeadValues } from "./LeadForm/defaultLeadValues";
+import { exportToCSV } from "../../utils/exportToCSV";
 
 function LeadsPage() {
   const {
@@ -27,27 +30,14 @@ function LeadsPage() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
-  const [selectedLead, setSelectedLead] = useState(null);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    source: "",
-    status: "New",
-    notes: "",
-  });
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState(null);
+
+  const [formData, setFormData] = useState(defaultLeadValues);
 
   const resetForm = () => {
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      source: "",
-      status: "New",
-      notes: "",
-    });
-
+    setFormData(defaultLeadValues);
     setEditingLead(null);
   };
 
@@ -55,9 +45,13 @@ function LeadsPage() {
     const search = searchTerm.toLowerCase();
 
     const matchesSearch =
-      lead.name.toLowerCase().includes(search) ||
-      lead.email.toLowerCase().includes(search) ||
-      lead.source.toLowerCase().includes(search);
+      lead.name?.toLowerCase().includes(search) ||
+      lead.email?.toLowerCase().includes(search) ||
+      lead.phone?.toLowerCase().includes(search) ||
+      lead.company?.toLowerCase().includes(search) ||
+      lead.source?.toLowerCase().includes(search) ||
+      lead.status?.toLowerCase().includes(search) ||
+      lead.notes?.toLowerCase().includes(search);
 
     const matchesStatus =
       statusFilter === "All" || lead.status === statusFilter;
@@ -70,20 +64,34 @@ function LeadsPage() {
     setShowForm(true);
   };
 
+  const normalizeLeadPayload = (data) => ({
+    ...data,
+    estimatedValue: Number(data.estimatedValue || 0),
+    probability: Number(data.probability || 0),
+    tags:
+      typeof data.tags === "string"
+        ? data.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        : data.tags || [],
+  });
+
   const handleSaveLead = async (e) => {
     e.preventDefault();
 
     try {
+      const payload = normalizeLeadPayload(formData);
+
       if (editingLead) {
-        await updateLead(editingLead._id || editingLead.id, formData);
+        await updateLead(editingLead._id || editingLead.id, payload);
         toast.success("Lead updated successfully.");
       } else {
-        await createLead(formData);
+        await createLead(payload);
         toast.success("Lead created successfully.");
       }
 
       await loadLeads();
-
       resetForm();
       setShowForm(false);
     } catch (err) {
@@ -96,32 +104,60 @@ function LeadsPage() {
     setEditingLead(lead);
 
     setFormData({
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      source: lead.source,
-      status: lead.status,
-      notes: lead.notes,
+      ...defaultLeadValues,
+      ...lead,
+      tags: Array.isArray(lead.tags) ? lead.tags.join(", ") : lead.tags || "",
+      nextFollowUp: lead.nextFollowUp ? lead.nextFollowUp.split("T")[0] : "",
+      expectedCloseDate: lead.expectedCloseDate
+        ? lead.expectedCloseDate.split("T")[0]
+        : "",
+      lastContacted: lead.lastContacted ? lead.lastContacted.split("T")[0] : "",
     });
 
     setShowForm(true);
   };
 
-  const handleDeleteLead = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this lead?"
-    );
+  const handleDeleteLead = (id) => {
+    setLeadToDelete(id);
+    setShowDeleteDialog(true);
+  };
 
-    if (!confirmDelete) return;
-
+  const confirmDeleteLead = async () => {
     try {
-      await deleteLead(id);
+      await deleteLead(leadToDelete);
       await loadLeads();
       toast.success("Lead deleted successfully.");
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete lead.");
+    } finally {
+      setLeadToDelete(null);
+      setShowDeleteDialog(false);
     }
+  };
+
+  const handleExportCSV = () => {
+    if (leads.length === 0) {
+      toast.warning("No leads available to export.");
+      return;
+    }
+
+    const exportData = leads.map((lead) => ({
+      Name: lead.name,
+      Email: lead.email,
+      Phone: lead.phone,
+      Company: lead.company,
+      Status: lead.status,
+      Priority: lead.priority,
+      Source: lead.source,
+      EstimatedValue: lead.estimatedValue,
+      Probability: lead.probability,
+      NextFollowUp: lead.nextFollowUp,
+      CreatedAt: lead.createdAt,
+    }));
+
+    exportToCSV(exportData, "crm-leads-export.csv");
+    toast.success("Leads exported successfully.");
   };
 
   const handleCloseForm = () => {
@@ -133,7 +169,6 @@ function LeadsPage() {
     <Layout title="Leads">
       <div className="mb-6">
         <h3 className="text-lg font-semibold">Client Leads</h3>
-
         <p className="text-gray-600">
           Manage incoming client inquiries and follow-up status.
         </p>
@@ -153,6 +188,15 @@ function LeadsPage() {
         onAddLead={handleOpenAddForm}
       />
 
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleExportCSV}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+        >
+          Export CSV
+        </button>
+      </div>
+
       {loading ? (
         <LoadingSpinner />
       ) : filteredLeads.length === 0 ? (
@@ -160,7 +204,6 @@ function LeadsPage() {
       ) : (
         <LeadTable
           leads={filteredLeads}
-          onView={setSelectedLead}
           onEdit={handleEditLead}
           onDelete={handleDeleteLead}
         />
@@ -177,10 +220,17 @@ function LeadsPage() {
         />
       )}
 
-      {selectedLead && (
-        <LeadDetails
-          lead={selectedLead}
-          onClose={() => setSelectedLead(null)}
+      {showDeleteDialog && (
+        <ConfirmDialog
+          title="Delete Lead"
+          message="Are you sure you want to delete this lead? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDeleteLead}
+          onCancel={() => {
+            setShowDeleteDialog(false);
+            setLeadToDelete(null);
+          }}
         />
       )}
     </Layout>
