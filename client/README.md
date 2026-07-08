@@ -1,16 +1,196 @@
-# React + Vite
+# LeadFlow CRM
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern full-stack CRM platform built to manage leads, track sales pipelines, monitor follow-ups, and analyze business performance through a centralized dashboard.
 
-Currently, two official plugins are available:
+Developed as part of the Future Intern Full Stack Development Program and extended into a portfolio-grade MERN application.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Authentication
+- JWT Authentication
+- Protected Routes
+- Secure Login Flow
 
-## Expanding the ESLint configuration
+### Dashboard
+- Total Leads Overview
+- Pipeline Value Tracking
+- Conversion Metrics
+- High Priority Lead Monitoring
+- Recent Leads Section
+- Upcoming Follow-ups
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Lead Management
+- Create Leads
+- Edit Leads
+- Delete Leads
+- Advanced Lead Details Workspace
+- Search and Filter Leads
+- CSV Export
+
+### Pipeline Management
+- Kanban Style Pipeline
+- Drag and Drop Lead Movement
+- Multi-stage Sales Workflow
+
+### Analytics
+- Lead Source Analytics
+- Conversion Rate Tracking
+- Pipeline Value Analysis
+- Status Distribution Charts
+
+### Follow-up Management
+- Upcoming Follow-ups
+- Overdue Follow-ups
+- Follow-up Status Indicators
+
+### Productivity Features
+- Global Search
+- Notification Center
+- Activity Timeline
+- Notes History
+- Quick Actions
+
+---
+
+## Tech Stack
+
+### Frontend
+- React
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Recharts
+- DnD Kit
+- Lucide React
+- React Toastify
+- Axios
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT
+- bcryptjs
+
+---
+
+## Sales Pipeline Stages
+
+```text
+New
+→ Contacted
+→ Qualified
+→ Proposal Sent
+→ Negotiation
+→ Won
+→ Lost
+```
+
+---
+
+## Project Structure
+
+```text
+client/
+├── components/
+├── constants/
+├── features/
+├── hooks/
+├── services/
+├── utils/
+
+server/
+├── controllers/
+├── middleware/
+├── models/
+├── routes/
+├── config/
+```
+
+---
+
+## Environment Variables
+
+### Server
+
+Create:
+
+```env
+server/.env
+```
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+```
+
+### Client
+
+Create:
+
+```env
+client/.env
+```
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+---
+
+## Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/singhdevashish01/FUTURE_FS_02.git
+```
+
+### Frontend
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+### Backend
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+---
+
+## Future Improvements
+
+- Role Based Access Control
+- Dark Mode
+- Email Integration
+- File Attachments
+- Team Collaboration
+- Audit Logs
+
+---
+
+## Author
+
+**Devashish Singh**
+
+Computer Science Engineering Undergraduate
+
+- GitHub: https://github.com/singhdevashish01
+- LinkedIn: Add your LinkedIn profile link
+- Portfolio: Add your portfolio link
+
+---
+
+## License
+
+This project is developed for educational and portfolio purposes.
