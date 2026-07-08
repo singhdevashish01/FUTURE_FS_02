@@ -5,13 +5,14 @@ import Layout from "../../components/layout/Layout";
 import SearchBar from "./SearchBar";
 import LeadTable from "./LeadTable";
 import LeadForm from "./LeadForm/LeadForm";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
 
 import useLeads from "../../hooks/useLeads";
 import { defaultLeadValues } from "./LeadForm/defaultLeadValues";
-import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import { exportToCSV } from "../../utils/exportToCSV";
 
 function LeadsPage() {
   const {
@@ -30,10 +31,10 @@ function LeadsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
 
-  const [formData, setFormData] = useState(defaultLeadValues);
-
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
+
+  const [formData, setFormData] = useState(defaultLeadValues);
 
   const resetForm = () => {
     setFormData(defaultLeadValues);
@@ -70,9 +71,9 @@ function LeadsPage() {
     tags:
       typeof data.tags === "string"
         ? data.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter(Boolean)
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
         : data.tags || [],
   });
 
@@ -91,7 +92,6 @@ function LeadsPage() {
       }
 
       await loadLeads();
-
       resetForm();
       setShowForm(false);
     } catch (err) {
@@ -107,15 +107,11 @@ function LeadsPage() {
       ...defaultLeadValues,
       ...lead,
       tags: Array.isArray(lead.tags) ? lead.tags.join(", ") : lead.tags || "",
-      nextFollowUp: lead.nextFollowUp
-        ? lead.nextFollowUp.split("T")[0]
-        : "",
+      nextFollowUp: lead.nextFollowUp ? lead.nextFollowUp.split("T")[0] : "",
       expectedCloseDate: lead.expectedCloseDate
         ? lead.expectedCloseDate.split("T")[0]
         : "",
-      lastContacted: lead.lastContacted
-        ? lead.lastContacted.split("T")[0]
-        : "",
+      lastContacted: lead.lastContacted ? lead.lastContacted.split("T")[0] : "",
     });
 
     setShowForm(true);
@@ -129,9 +125,7 @@ function LeadsPage() {
   const confirmDeleteLead = async () => {
     try {
       await deleteLead(leadToDelete);
-
       await loadLeads();
-
       toast.success("Lead deleted successfully.");
     } catch (err) {
       console.error(err);
@@ -142,11 +136,39 @@ function LeadsPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    if (leads.length === 0) {
+      toast.warning("No leads available to export.");
+      return;
+    }
+
+    const exportData = leads.map((lead) => ({
+      Name: lead.name,
+      Email: lead.email,
+      Phone: lead.phone,
+      Company: lead.company,
+      Status: lead.status,
+      Priority: lead.priority,
+      Source: lead.source,
+      EstimatedValue: lead.estimatedValue,
+      Probability: lead.probability,
+      NextFollowUp: lead.nextFollowUp,
+      CreatedAt: lead.createdAt,
+    }));
+
+    exportToCSV(exportData, "crm-leads-export.csv");
+    toast.success("Leads exported successfully.");
+  };
+
+  const handleCloseForm = () => {
+    resetForm();
+    setShowForm(false);
+  };
+
   return (
     <Layout title="Leads">
       <div className="mb-6">
         <h3 className="text-lg font-semibold">Client Leads</h3>
-
         <p className="text-gray-600">
           Manage incoming client inquiries and follow-up status.
         </p>
@@ -165,6 +187,15 @@ function LeadsPage() {
         setStatusFilter={setStatusFilter}
         onAddLead={handleOpenAddForm}
       />
+
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleExportCSV}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+        >
+          Export CSV
+        </button>
+      </div>
 
       {loading ? (
         <LoadingSpinner />
