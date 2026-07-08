@@ -11,6 +11,7 @@ import EmptyState from "../../components/common/EmptyState";
 
 import useLeads from "../../hooks/useLeads";
 import { defaultLeadValues } from "./LeadForm/defaultLeadValues";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 
 function LeadsPage() {
   const {
@@ -30,6 +31,9 @@ function LeadsPage() {
   const [editingLead, setEditingLead] = useState(null);
 
   const [formData, setFormData] = useState(defaultLeadValues);
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState(null);
 
   const resetForm = () => {
     setFormData(defaultLeadValues);
@@ -66,9 +70,9 @@ function LeadsPage() {
     tags:
       typeof data.tags === "string"
         ? data.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean)
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
         : data.tags || [],
   });
 
@@ -117,24 +121,25 @@ function LeadsPage() {
     setShowForm(true);
   };
 
-  const handleDeleteLead = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this lead?")) {
-      return;
-    }
+  const handleDeleteLead = (id) => {
+    setLeadToDelete(id);
+    setShowDeleteDialog(true);
+  };
 
+  const confirmDeleteLead = async () => {
     try {
-      await deleteLead(id);
+      await deleteLead(leadToDelete);
+
       await loadLeads();
+
       toast.success("Lead deleted successfully.");
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete lead.");
+    } finally {
+      setLeadToDelete(null);
+      setShowDeleteDialog(false);
     }
-  };
-
-  const handleCloseForm = () => {
-    resetForm();
-    setShowForm(false);
   };
 
   return (
@@ -181,6 +186,20 @@ function LeadsPage() {
           onCancel={handleCloseForm}
           title={editingLead ? "Edit Lead" : "Add New Lead"}
           submitText={editingLead ? "Update Lead" : "Save Lead"}
+        />
+      )}
+
+      {showDeleteDialog && (
+        <ConfirmDialog
+          title="Delete Lead"
+          message="Are you sure you want to delete this lead? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDeleteLead}
+          onCancel={() => {
+            setShowDeleteDialog(false);
+            setLeadToDelete(null);
+          }}
         />
       )}
     </Layout>
