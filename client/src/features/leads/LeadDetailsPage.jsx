@@ -6,6 +6,7 @@ import useLeads from "../../hooks/useLeads";
 
 import LeadActivityTimeline from "./LeadActivityTimeline";
 import LeadFollowUpPanel from "./LeadFollowUpPanel";
+import LeadNotesHistory from "./LeadNotesHistory";  
 
 function LeadDetailsPage() {
   const { id } = useParams();
@@ -164,6 +165,7 @@ function LeadDetailsPage() {
 
           {/* Activity Timeline */}
           <LeadActivityTimeline lead={lead} />
+          <LeadNotesHistory lead={lead} />
 
         </div>
 
