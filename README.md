@@ -1,6 +1,15 @@
 # LeadFlow CRM
 
-A modern Full Stack Customer Relationship Management (CRM) application built using the MERN stack. LeadFlow CRM helps businesses manage client leads, monitor lead status, and streamline follow up activities through a clean and responsive dashboard.
+A modern Full Stack Customer Relationship Management (CRM) application built using the MERN stack. LeadFlow CRM helps businesses manage leads, monitor sales progress, track follow-ups, and analyze pipeline performance through a centralized dashboard.
+
+Developed as part of the **Future Intern Full Stack Development Program** and later extended into a portfolio grade CRM platform.
+
+---
+
+## Live Demo
+
+Frontend https://leadflow-crm-devashish.vercel.app 
+Backend API https://leadflow-crm-backend-l4cd.onrender.com 
 
 ---
 
@@ -8,28 +17,50 @@ A modern Full Stack Customer Relationship Management (CRM) application built usi
 
 ### Authentication
 - Secure Admin Login
-- JWT-based Authentication (Backend Integration)
+- JWT Authentication
 - Protected Routes
 - Logout Functionality
 
 ### Dashboard
 - Lead Statistics
+- KPI Metrics
 - Quick Actions
 - Recent Leads
-- Responsive KPI Cards
+- Upcoming Follow-ups
+- Responsive Dashboard Cards
 
 ### Lead Management
 - Add Lead
 - Edit Lead
 - Delete Lead
-- View Lead Details
+- View Detailed Lead Profiles
 - Search Leads
-- Filter by Status
+- Filter Leads by Status
+- CSV Export
+
+### Sales Pipeline
+- Kanban style Pipeline View
+- Drag and Drop Lead Movement
+- Multi stage Sales Workflow
 
 ### Analytics
 - Conversion Statistics
-- Lead Sources
+- Lead Source Distribution
+- Pipeline Value Tracking
 - Dashboard Metrics
+- Charts and Visualizations
+
+### Follow-ups
+- Upcoming Follow-ups
+- Overdue Follow-ups
+- Follow-up Status Tracking
+
+### Productivity Features
+- Global Search
+- Notification Center
+- Activity Timeline
+- Notes History
+- Quick Actions
 
 ### Settings
 - Admin Profile
@@ -40,16 +71,17 @@ A modern Full Stack Customer Relationship Management (CRM) application built usi
 ## Tech Stack
 
 ### Frontend
-
 - React
 - Vite
 - Tailwind CSS
 - React Router DOM
 - Axios
+- Recharts
+- DnD Kit
+- React Toastify
 - Lucide React
 
 ### Backend
-
 - Node.js
 - Express.js
 - MongoDB Atlas
@@ -59,19 +91,33 @@ A modern Full Stack Customer Relationship Management (CRM) application built usi
 
 ---
 
+## Sales Pipeline Workflow
+
+```text
+New
+→ Contacted
+→ Qualified
+→ Proposal Sent
+→ Negotiation
+→ Won
+→ Lost
+```
+
+---
+
 ## Project Structure
 
-```
+```text
 FUTURE_FS_02
 │
 ├── client
 │   ├── src
-│   │   ├── assets
 │   │   ├── components
-│   │   ├── data
+│   │   ├── constants
 │   │   ├── features
 │   │   ├── hooks
 │   │   ├── services
+│   │   ├── utils
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   │
@@ -86,6 +132,7 @@ FUTURE_FS_02
 │   ├── utils
 │   └── server.js
 │
+├── .gitignore
 └── README.md
 ```
 
@@ -99,7 +146,7 @@ FUTURE_FS_02
 git clone https://github.com/singhdevashish01/FUTURE_FS_02.git
 ```
 
-### Install Frontend
+### Frontend Setup
 
 ```bash
 cd client
@@ -107,7 +154,7 @@ npm install
 npm run dev
 ```
 
-### Install Backend
+### Backend Setup
 
 ```bash
 cd server
@@ -119,14 +166,30 @@ npm run dev
 
 ## Environment Variables
 
-Create a `.env` file inside the `server` directory.
+### Server
+
+Create:
+
+```text
+server/.env
+```
 
 ```env
 PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+```
 
-MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
+### Client
 
-JWT_SECRET=YOUR_SECRET_KEY
+Create:
+
+```text
+client/.env
+```
+
+```env
+VITE_API_URL=http://localhost:5000/api
 ```
 
 ---
@@ -135,19 +198,16 @@ JWT_SECRET=YOUR_SECRET_KEY
 
 ### Authentication
 
-```
+```text
 POST /api/auth/login
 ```
 
 ### Leads
 
-```
+```text
 GET    /api/leads
-
 POST   /api/leads
-
 PUT    /api/leads/:id
-
 DELETE /api/leads/:id
 ```
 
@@ -156,23 +216,22 @@ DELETE /api/leads/:id
 ## Current Status
 
 - Frontend Completed
-- Backend Structure Completed
-- Authentication Structure Completed
-- GitHub Repository Configured
-- MongoDB Integration In Progress
-- Deployment Pending
+- Backend Completed
+- MongoDB Atlas Integrated
+- Authentication Implemented
+- Deployment Completed
+- Production Ready
 
 ---
 
 ## Future Improvements
 
-- Email Notifications
-- Lead Assignment
 - Role Based Access Control
-- Dashboard Charts
-- Export Leads to CSV
+- Email Integration
+- File Attachments
+- Team Collaboration
+- Audit Logs
 - Dark Mode
-- Activity Timeline
 
 ---
 
@@ -188,15 +247,8 @@ https://github.com/singhdevashish01
 LinkedIn:
 https://www.linkedin.com/in/devashishsingh01
 
----
-
-## Live Demo
-
-Frontend:
-https://leadflow-crm-devashish-da1lv8pk9-devashishsingh01.vercel.app
-
-Backend:
-https://leadflow-crm-backend-l4cd.onrender.com
+Portfolio:
+https://devashish-portfolio-pi.vercel.app
 
 ---
 
