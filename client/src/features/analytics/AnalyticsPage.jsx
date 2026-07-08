@@ -14,27 +14,46 @@ import {
 import Layout from "../../components/layout/Layout";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import EmptyState from "../../components/common/EmptyState";
+import MetricCard from "../../components/ui/MetricCard";
 import useLeads from "../../hooks/useLeads";
+import { LEAD_STATUSES } from "../../constants/leadConstants";
+import { IndianRupee, TrendingUp, AlertCircle, Users } from "lucide-react";
 
 function AnalyticsPage() {
   const { leads, loading, error } = useLeads();
 
   const totalLeads = leads.length;
 
-  const convertedLeads = leads.filter(
-    (lead) => lead.status === "Converted"
+  const wonLeads = leads.filter(
+    (lead) => lead.status === "Won" || lead.status === "Converted"
+  ).length;
+
+  const pipelineValue = leads.reduce(
+    (total, lead) => total + Number(lead.estimatedValue || 0),
+    0
+  );
+
+  const averageDealValue =
+    totalLeads > 0 ? Math.round(pipelineValue / totalLeads) : 0;
+
+  const highPriorityLeads = leads.filter(
+    (lead) => lead.priority === "High"
   ).length;
 
   const conversionRate =
-    totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0;
+    totalLeads > 0 ? Math.round((wonLeads / totalLeads) * 100) : 0;
 
-  const statusData = ["New", "Contacted", "Converted"].map((status) => ({
+  const formatCurrency = (value) =>
+    `₹${Number(value || 0).toLocaleString("en-IN")}`;
+
+  const statusData = LEAD_STATUSES.map((status) => ({
     name: status,
     value: leads.filter((lead) => lead.status === status).length,
   }));
 
   const sourceMap = leads.reduce((acc, lead) => {
-    acc[lead.source] = (acc[lead.source] || 0) + 1;
+    const source = lead.source || "Other";
+    acc[source] = (acc[source] || 0) + 1;
     return acc;
   }, {});
 
@@ -43,12 +62,33 @@ function AnalyticsPage() {
     count,
   }));
 
-  const chartColors = ["#2563eb", "#eab308", "#16a34a"];
+  const priorityData = ["High", "Medium", "Low"].map((priority) => ({
+    name: priority,
+    value: leads.filter((lead) => lead.priority === priority).length,
+  }));
+
+  const pipelineValueData = LEAD_STATUSES.map((status) => ({
+    status,
+    value: leads
+      .filter((lead) => lead.status === status)
+      .reduce((total, lead) => total + Number(lead.estimatedValue || 0), 0),
+  }));
+
+  const chartColors = [
+    "#2563eb",
+    "#eab308",
+    "#16a34a",
+    "#9333ea",
+    "#f97316",
+    "#dc2626",
+    "#64748b",
+  ];
 
   return (
     <Layout title="Analytics">
       <p className="text-gray-600 mb-6">
-        Review live lead performance, conversion rate, and lead sources.
+        Review pipeline value, conversion performance, lead sources, and
+        priority distribution.
       </p>
 
       {error && (
@@ -63,18 +103,38 @@ function AnalyticsPage() {
         <EmptyState message="No lead data available for analytics yet." />
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <p className="text-sm text-gray-500">Conversion Rate</p>
-              <h3 className="text-4xl font-bold mt-2">{conversionRate}%</h3>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+            <MetricCard
+              title="Pipeline Value"
+              value={formatCurrency(pipelineValue)}
+              subtitle="Estimated total value"
+              icon={<IndianRupee size={24} />}
+              accent="green"
+            />
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <p className="text-sm text-gray-500">Converted Leads</p>
-              <h3 className="text-4xl font-bold mt-2">
-                {convertedLeads}/{totalLeads}
-              </h3>
-            </div>
+            <MetricCard
+              title="Average Deal"
+              value={formatCurrency(averageDealValue)}
+              subtitle="Average value per lead"
+              icon={<TrendingUp size={24} />}
+              accent="blue"
+            />
+
+            <MetricCard
+              title="Conversion Rate"
+              value={`${conversionRate}%`}
+              subtitle={`${wonLeads} won leads`}
+              icon={<Users size={24} />}
+              accent="yellow"
+            />
+
+            <MetricCard
+              title="High Priority"
+              value={highPriorityLeads}
+              subtitle="Needs attention"
+              icon={<AlertCircle size={24} />}
+              accent="red"
+            />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -117,6 +177,54 @@ function AnalyticsPage() {
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="count" fill="#2563eb" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Priority Distribution
+              </h3>
+
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={priorityData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={110}
+                      label
+                    >
+                      {priorityData.map((entry, index) => (
+                        <Cell
+                          key={entry.name}
+                          fill={chartColors[index % chartColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Pipeline Value by Stage
+              </h3>
+
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={pipelineValueData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="status" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value) => formatCurrency(value)}
+                    />
+                    <Bar dataKey="value" fill="#16a34a" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
