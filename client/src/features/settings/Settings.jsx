@@ -38,7 +38,7 @@ function Settings() {
           <h3 className="text-xl font-semibold mb-4">CRM Preferences</h3>
 
           <div className="space-y-3 text-gray-700">
-            <p>Lead status workflow: New → Contacted → Converted</p>
+            <p>Lead status workflow: New → Contacted → Qualified → Proposal Sent → Negotiation → Won</p>
             <p>Default lead source: Website Contact Form</p>
             <p>Notification mode: In-app</p>
           </div>

@@ -46,11 +46,11 @@ function Sidebar() {
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
       <div className="px-6 py-6 border-b border-gray-200">
         <h1 className="text-2xl font-bold text-blue-600">
-          CRM Pro
+          LeadFlow CRM
         </h1>
 
         <p className="text-sm text-gray-500 mt-1">
-          Sales Management
+          Sales Pipeline Management
         </p>
       </div>
 
@@ -82,7 +82,7 @@ function Sidebar() {
 
       <div className="border-t border-gray-200 p-4">
         <p className="text-xs text-gray-500 text-center">
-          CRM Dashboard v2
+          LeadFlow CRM v2
         </p>
       </div>
     </aside>

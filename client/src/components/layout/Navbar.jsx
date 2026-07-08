@@ -22,7 +22,7 @@ function Navbar({ title }) {
             <span className="font-medium">Admin</span>
 
             <span className="text-xs text-gray-500">
-              CRM Administrator
+              Sales Administrator
             </span>
           </div>
         </div>
